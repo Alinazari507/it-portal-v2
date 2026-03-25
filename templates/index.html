@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>IT Service Portal | RapidRoute</title>
+    <!-- Font Awesome (optional, for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------- Global Reset & Variables ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fc;
+            color: #1e2a3e;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid #0078d4;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #0078d4, #00a2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            color: #5a6e7c;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .user-info {
+            background: white;
+            padding: 0.75rem 1.2rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+        }
+
+        .user-info i {
+            margin-right: 0.4rem;
+            color: #0078d4;
+        }
+
+        /* ---------- Kategorie Pills ---------- */
+        .categories {
+            margin-bottom: 2.5rem;
+        }
+
+        .categories h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .category-list a {
+            background: #eef2f5;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1e4663;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .category-list a:hover {
+            background: #0078d4;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ---------- Service Cards ---------- */
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2edf2;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .service-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #005a9e;
+            margin-bottom: 0.3rem;
+        }
+
+        .service-meta {
+            font-size: 0.75rem;
+            color: #6c7a89;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px dashed #e0e7ed;
+            padding-bottom: 0.6rem;
+        }
+
+        .business-view {
+            background: #f8fafc;
+            padding: 0.8rem;
+            border-left: 4px solid #0078d4;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #2d3e50;
+        }
+
+        .tech-preview {
+            margin: 0.8rem 0;
+            font-size: 0.8rem;
+            color: #3a6b92;
+            cursor: help;
+            display: inline-block;
+            background: #ecf3f8;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .sla-cost {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .sla {
+            color: #2c7a4d;
+        }
+
+        .cost {
+            color: #c0392b;
+        }
+
+        .btn-request {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            text-align: center;
+            padding: 0.7rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .btn-request:hover {
+            background: #218838;
+        }
+
+        /* ---------- Footer ---------- */
+        .footer {
+            margin-top: 3rem;
+            border-top: 1px solid #dce5ec;
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #5f7f9e;
+        }
+
+        .footer-links a {
+            color: #0078d4;
+            text-decoration: none;
+            margin: 0 0.75rem;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .services-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header mit Benutzerinfo -->
+        <div class="header">
+            <div class="logo">
+                <h1><i class="fas fa-rocket"></i> RapidRoute IT-Service</h1>
+                <p>Dein zentraler Service-Katalog – schnell, transparent, automatisiert</p>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i> <strong>{{ current_user.fullname }}</strong><br>
+                <i class="fas fa-building"></i> {{ current_user.department }} 
+                {% if current_user.role == 'admin' %}
+                    <span style="background:#0078d4; color:white; padding:2px 8px; border-radius:20px; margin-left:8px; font-size:0.7rem;">Admin</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Kategorien als Filter -->
+        <div class="categories">
+            <h3><i class="fas fa-filter"></i> Service-Kategorien</h3>
+            <div class="category-list">
+                <a href="{{ url_for('index') }}"><i class="fas fa-th-large"></i> Alle</a>
+                <a href="{{ url_for('index', category='Hardware') }}"><i class="fas fa-laptop"></i> Hardware</a>
+                <a href="{{ url_for('index', category='Software') }}"><i class="fas fa-code"></i> Software</a>
+                <a href="{{ url_for('index', category='Zugang & Berechtigungen') }}"><i class="fas fa-key"></i> Zugang & Rechte</a>
+                <a href="{{ url_for('index', category='Support') }}"><i class="fas fa-headset"></i> Support</a>
+            </div>
+        </div>
+
+        <!-- Service-Karten -->
+        <div class="services-list">
+            {% for service in services %}
+            <div class="service-card">
+                <div class="card-content">
+                    <div class="service-name">{{ service.name }}</div>
+                    <div class="service-meta">
+                        <span><i class="fas fa-tag"></i> {{ service.id }}</span>
+                        <span><i class="fas fa-clock"></i> Verfügbar: {{ service.availability }}</span>
+                    </div>
+
+                    <!-- Business-Sicht -->
+                    <div class="business-view">
+                        <i class="fas fa-briefcase"></i> <strong>Business-Beschreibung:</strong><br>
+                        {{ service.description_business }}
+                    </div>
+
+                    <!-- Technik-Sicht (Tooltip oder kompakte Info) -->
+                    <div class="tech-preview" title="Technische Details (für IT)">
+                        <i class="fas fa-microchip"></i> Technische Details:
+                        <span style="font-weight:normal;">{{ service.description_technical | truncate(60) }}</span>
+                    </div>
+
+                    <!-- SLA & Kosten -->
+                    <div class="sla-cost">
+                        <span class="sla"><i class="fas fa-hourglass-half"></i> SLA: {{ service.sla }}</span>
+                        <span class="cost"><i class="fas fa-euro-sign"></i> Kosten: {{ service.costs }}</span>
+                    </div>
+
+                    <!-- Request Button -->
+                    <a href="{{ url_for('show_request_form', service_id=service.id) }}" class="btn-request">
+                        <i class="fas fa-paper-plane"></i> Jetzt anfordern
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column:1/-1; text-align:center; padding:3rem; background:#f8fafc; border-radius:30px;">
+                <i class="fas fa-info-circle"></i> Keine Services in dieser Kategorie verfügbar.
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Footer mit Navigation -->
+        <div class="footer">
+            <div class="footer-links">
+                {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin_panel') }}"><i class="fas fa-tachometer-alt"></i> Admin-Panel</a> |
+                    <a href="{{ url_for('admin_cmdb') }}"><i class="fas fa-database"></i> CMDB</a> |
+                    <a href="{{ url_for('kedb_list') }}"><i class="fas fa-book"></i> KEDB</a> |
+                {% endif %}
+                <a href="{{ url_for('requests_list') }}"><i class="fas fa-clipboard-list"></i> Meine Anfragen</a> |
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Abmelden</a>
+            </div>
+            <p style="margin-top:1rem;">© 2026 RapidRoute IT Service Management – ITIL®-konform | Service-Blueprint nach ITAM & IMAC/RD</p>
+        </div>
+    </div>
+</body>
+</html>

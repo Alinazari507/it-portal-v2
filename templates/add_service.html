@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuen Service anlegen | IT Service Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fc;
+            color: #1e2a3e;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0078d4, #005a9e);
+            padding: 2rem 2rem 1.5rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .form-content {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.3rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #2c3e50;
+        }
+
+        .required:after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #0078d4;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            width: auto;
+            padding: 0.6rem 1.2rem;
+            margin-top: 0;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2edf2;
+        }
+
+        .footer-links a {
+            color: #0078d4;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        small {
+            color: #6c7a89;
+            font-size: 0.75rem;
+            display: block;
+            margin-top: 0.3rem;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border-color: #e2edf2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-plus-circle"></i> Service hinzufügen</h1>
+            <p>Erweitern Sie den IT-Servicekatalog – Business- und Technik-Sicht</p>
+        </div>
+
+        <div class="form-content">
+            <form method="post" action="{{ url_for('add_service_form') }}">
+                <!-- Service-ID -->
+                <div class="form-group">
+                    <label class="required">Service-ID</label>
+                    <input type="text" name="id" placeholder="z.B. HW-099, SW-023" required>
+                    <small>Eindeutige Kennung (wird in Tickets und CMDB verwendet)</small>
+                </div>
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="required">Service-Name</label>
+                    <input type="text" name="name" placeholder="z.B. Standard Laptop, VPN-Zugang" required>
+                </div>
+
+                <!-- Kategorie -->
+                <div class="form-group">
+                    <label class="required">Kategorie</label>
+                    <select name="category" required>
+                        <option value="">Bitte auswählen</option>
+                        <option value="Hardware">Hardware</option>
+                        <option value="Software">Software</option>
+                        <option value="Zugang & Berechtigungen">Zugang & Berechtigungen</option>
+                        <option value="Support">Support</option>
+                    </select>
+                    <small>Wird für die Filterung im Servicekatalog genutzt</small>
+                </div>
+
+                <!-- Verfügbarkeit -->
+                <div class="form-group">
+                    <label class="required">Verfügbarkeit</label>
+                    <input type="text" name="availability" placeholder="z.B. Sofort, 24h, 2 Werktage" required>
+                </div>
+
+                <!-- Business-Beschreibung -->
+                <div class="form-group">
+                    <label class="required">Business-Beschreibung (Endanwender)</label>
+                    <textarea name="description_business" placeholder="Klare, nicht-technische Beschreibung: Was erhält der Nutzer? Welchen Nutzen hat er?" required></textarea>
+                    <small>Wird im Portal in der Business-Sicht angezeigt</small>
+                </div>
+
+                <!-- Technische Beschreibung -->
+                <div class="form-group">
+                    <label>Technische Beschreibung (IT-Intern)</label>
+                    <textarea name="description_technical" placeholder="Modell, Versionen, benötigte Lizenzen, Abhängigkeiten, Support-Level ..."></textarea>
+                    <small>Nur für Administratoren sichtbar – dient der technischen Umsetzung</small>
+                </div>
+
+                <!-- SLA -->
+                <div class="form-group">
+                    <label class="required">SLA (Service Level Agreement)</label>
+                    <input type="text" name="sla" placeholder="z.B. 3 Werktage, 4 Stunden nach Genehmigung" required>
+                </div>
+
+                <!-- Kosten -->
+                <div class="form-group">
+                    <label>Kosten (optional)</label>
+                    <input type="text" name="costs" placeholder="z.B. 0€, 15€/Monat, 500€">
+                </div>
+
+                <button type="submit" class="btn"><i class="fas fa-save"></i> Service speichern</button>
+            </form>
+
+            <div class="footer-links">
+                <a href="{{ url_for('index') }}"><i class="fas fa-arrow-left"></i> Zurück zum Katalog</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMDB – IT-Asset Management | RapidRoute</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fc;
+            color: #1e2a3e;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e4663, #0f2c42);
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2edf2;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #0078d4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2edf2;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e4663;
+        }
+
+        .badge {
+            background: #eef2f5;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-lager { background: #fff3cd; color: #856404; }
+        .badge-defect { background: #f8d7da; color: #721c24; }
+        .badge-retired { background: #e2e3e5; color: #383d41; }
+
+        /* Log section */
+        .log-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eef2f5;
+            font-size: 0.85rem;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .log-time {
+            color: #6c7a89;
+            font-family: monospace;
+            min-width: 140px;
+        }
+
+        .log-action {
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .log-details {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-database"></i> CMDB – Configuration Management Database</h1>
+                <p>Zentrale Verwaltung aller IT-Assets – vollständiger Lebenszyklus (IMAC/RD)</p>
+            </div>
+            <a href="{{ url_for('admin_panel') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Zurück zum Admin-Panel</a>
+        </div>
+
+        <!-- Formular zum Hinzufügen eines neuen Assets -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i> Neues Asset registrieren (IMAC: Install)
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_cmdb') }}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Asset-Tag *</label>
+                            <input type="text" name="asset_tag" placeholder="z.B. RR-LP-0421" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gerätetyp *</label>
+                            <input type="text" name="geraetetyp" placeholder="Laptop, Monitor, Tablet, ..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hersteller / Modell *</label>
+                            <input type="text" name="hersteller_modell" placeholder="HP EliteBook 840 G10" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Seriennummer *</label>
+                            <input type="text" name="seriennummer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kaufdatum (optional)</label>
+                            <input type="date" name="kaufdatum">
+                        </div>
+                        <div class="form-group">
+                            <label>Status *</label>
+                            <select name="status" required>
+                                <option value="Im Lager">Im Lager</option>
+                                <option value="Zugewiesen">Zugewiesen (aktiv)</option>
+                                <option value="Defekt">Defekt</option>
+                                <option value="Ausgemustert">Ausgemustert (Retired)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nutzer / Standort</label>
+                            <input type="text" name="nutzer_standort" placeholder="z.B. Hub Hamburg, Max Mustermann">
+                        </div>
+                        <div class="form-group">
+                            <label>Garantie bis (optional)</label>
+                            <input type="date" name="garantie_bis">
+                        </div>
+                        <div class="form-group">
+                            <label>Lizenz bis (optional)</label>
+                            <input type="text" name="lizenz_bis" placeholder="z.B. 31.12.2026">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Asset speichern & in CMDB aufnehmen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabelle der vorhandenen Assets -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-list-ul"></i> Inventarliste (aktive & gelagerte Assets)
+            </div>
+            <div class="card-body table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset-Tag</th>
+                            <th>Typ</th>
+                            <th>Modell</th>
+                            <th>Seriennummer</th>
+                            <th>Nutzer/Standort</th>
+                            <th>Status</th>
+                            <th>Garantie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td><strong>{{ item.asset_tag }}</strong></td>
+                            <td>{{ item.geraetetyp }}</td>
+                            <td>{{ item.hersteller_modell }}</td>
+                            <td><code>{{ item.seriennummer }}</code></td>
+                            <td>{{ item.nutzer_standort if item.nutzer_standort else '-' }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if item.status == 'Zugewiesen' %}badge-active
+                                    {% elif item.status == 'Im Lager' %}badge-lager
+                                    {% elif item.status == 'Defekt' %}badge-defect
+                                    {% elif item.status == 'Ausgemustert' %}badge-retired
+                                    {% else %}badge{% endif %}">
+                                    {{ item.status }}
+                                </span>
+                            </td>
+                            <td>{{ item.garantie_bis if item.garantie_bis else '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">Keine Assets in der CMDB. Fügen Sie das erste Gerät hinzu.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- IMAC/RD Log (optional, falls inventory_log Tabelle existiert) -->
+        {% if logs is defined and logs %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history"></i> IMAC/RD-Log – Lebenszyklusverlauf
+            </div>
+            <div class="card-body log-list">
+                {% for log in logs %}
+                <div class="log-item">
+                    <span class="log-time">{{ log.created_at[:16] }}</span>
+                    <span class="log-action">{{ log.action }}</span>
+                    <span class="log-details">
+                        <strong>{{ log.asset_tag }}</strong> – {{ log.details }}
+                        {% if log.user %} (von {{ log.user }}){% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

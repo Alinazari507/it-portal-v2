@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin-Panel | IT Service Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Status Badges */
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #ffc107; color: #856404; }
+        .status-checking { background: #6f42c1; color: white; }
+        .status-progress { background: #17a2b8; color: white; }
+        .status-order { background: #fd7e14; color: white; }
+        .status-approved { background: #28a745; color: white; }
+        .status-rejected { background: #dc3545; color: white; }
+
+        /* Dashboard Cards */
+        .admin-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-top: 25px; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { padding: 25px; border-radius: 15px; color: white; text-align: center; transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .bg-pending { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .bg-progress { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .bg-completed { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .bg-inventory { background: linear-gradient(135deg, #2c3e50, #34495e); }
+        .stat-card h2 { margin: 10px 0 0 0; font-size: 2.5em; font-weight: bold; }
+        .stat-card p { margin: 0; font-size: 1em; text-transform: uppercase; letter-spacing: 1px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background-color: #fcfcfc; color: #666; font-weight: 600; }
+        tr:hover { background-color: #f9f9f9; }
+
+        .btn-excel { background-color: #1d6f42; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; font-weight: bold; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-excel:hover { background-color: #145532; box-shadow: 0 4px 10px rgba(29, 111, 66, 0.3); }
+        select { padding: 8px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+        .deadline-warning { color: #dc3545; font-weight: 600; margin-left: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header" style="margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
+            <h1 style="color: #2c3e50;">🛠️ IT-Administration Dashboard</h1>
+            <p style="color: #7f8c8d;">Zentrale Übersicht für Tickets und CMDB-Inventar</p>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info" style="background:#e3f2fd; border-left: 5px solid #2196f3; padding:15px; border-radius:4px; margin-bottom:20px;">
+                  ℹ️ {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="stats-container">
+            <div class="stat-card bg-pending">
+                <p>Offene Anfragen</p>
+                <h2>{{ stats['Pending'] if stats else 0 }}</h2>
+            </div>
+            <div class="stat-card bg-progress">
+                <p>In Bearbeitung</p>
+                <h2>{{ stats['In Progress'] if stats else 0 }}</h2>
+            </div>
+            <div class="stat-card bg-completed">
+                <p>Abgeschlossen</p>
+                <h2>{{ stats['Completed'] if stats else 0 }}</h2>
+            </div>
+            <div class="stat-card bg-inventory">
+                <p>Inventar-Geräte</p>
+                <h2>{{ inv_count if inv_count else 0 }}</h2>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+            <a href="{{ url_for('export_tickets_excel') }}" class="btn-excel">
+                📊 Excel-Bericht exportieren
+            </a>
+        </div>
+
+        <div class="admin-card">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; border-left: 4px solid #3498db; padding-left: 10px;">Eingegangene Service-Tickets</h3>
+            <div style="overflow-x: auto;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mitarbeiter</th>
+                            <th>Abteilung</th>
+                            <th>Service</th>
+                            <th>Priorität</th>
+                            <th>SLA-Deadline</th>
+                            <th>Status</th>
+                            <th>Bearbeitung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                         <tr>
+                            <td><span style="color: #999;">#{{ req.id }}</span></td>
+                            <td><strong>{{ req.user_name }}</strong></td>
+                            <td>{{ req.user_dept }}</td>
+                            <td><span class="badge bg-light text-dark">{{ req.service_id }}</span></td>
+                            <td>
+                                {% if req.priority == 'P1' %}
+                                    <span class="badge bg-danger">P1</span>
+                                {% elif req.priority == 'P2' %}
+                                    <span class="badge bg-warning">P2</span>
+                                {% elif req.priority == 'P3' %}
+                                    <span class="badge bg-info">P3</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ req.priority }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if req.sla_deadline %}
+                                    {{ req.sla_deadline.strftime('%d.%m.%Y %H:%M') }}
+                                    {% if req.status != 'Completed' and req.status != 'Rejected' and req.sla_deadline < now %}
+                                        <span class="deadline-warning">⚠️ überschritten</span>
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge 
+                                    {% if req.status == 'Pending' %}status-pending
+                                    {% elif req.status == 'Checking Inventory' %}status-checking
+                                    {% elif req.status == 'In Progress' %}status-progress
+                                    {% elif req.status == 'To be Ordered' %}status-order
+                                    {% elif req.status == 'Approved' or req.status == 'Completed' %}status-approved
+                                    {% else %}status-rejected{% endif %}">
+                                    {{ req.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('admin_update_request', request_id=req.id) }}" method="post">
+                                    <select name="status" onchange="this.form.submit()">
+                                        <option value="Pending" {% if req.status == 'Pending' %}selected{% endif %}>Warten</option>
+                                        <option value="Checking Inventory" {% if req.status == 'Checking Inventory' %}selected{% endif %}>Lager prüfen</option>
+                                        <option value="In Progress" {% if req.status == 'In Progress' %}selected{% endif %}>Bearbeiten</option>
+                                        <option value="To be Ordered" {% if req.status == 'To be Ordered' %}selected{% endif %}>Bestellen</option>
+                                        <option value="Completed" {% if req.status == 'Completed' %}selected{% endif %}>Abschließen</option>
+                                        <option value="Rejected" {% if req.status == 'Rejected' %}selected{% endif %}>Ablehnen</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                                📁 Momentan liegen keine neuen Anfragen vor.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 12px;">
+            <a href="{{ url_for('index') }}" class="btn-secondary" style="margin: 0 10px;">← Zum Katalog</a>
+            <a href="{{ url_for('add_service_form') }}" class="btn-primary" style="margin: 0 10px;">➕ Service hinzufügen</a>
+            <a href="{{ url_for('admin_cmdb') }}" class="btn-dark" style="margin: 0 10px;">🖥️ CMDB Inventar</a>
+            <a href="{{ url_for('kedb_list') }}" class="btn-dark" style="margin: 0 10px;">📖 KEDB</a>
+        </div>
+    </div>
+</body>
+</html>
