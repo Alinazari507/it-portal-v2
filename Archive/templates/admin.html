@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin-Panel | IT Service Portal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
@@ -38,51 +37,14 @@
         .btn-excel:hover { background-color: #145532; box-shadow: 0 4px 10px rgba(29, 111, 66, 0.3); }
         select { padding: 8px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
         .deadline-warning { color: #dc3545; font-weight: 600; margin-left: 5px; }
-
-        /* Neue Header‑Styles (wie CMDB) */
-        .header {
-            background: linear-gradient(135deg, #1e4663, #0f2c42);
-            border-radius: 28px;
-            padding: 1.8rem 2rem;
-            margin-bottom: 2rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .header h1 {
-            font-size: 1.6rem;
-            margin-bottom: 0.2rem;
-        }
-        .header p {
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header nach CMDB-Vorbild -->
-        <div class="header">
-            <div>
-                <h1><i class="fas fa-tachometer-alt"></i> IT-Administration Dashboard</h1>
-                <p>Zentrale Übersicht für Tickets und CMDB-Inventar</p>
-            </div>
-            <a href="{{ url_for('index') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Zum Katalog</a>
-        </div>
+        <header class="header" style="margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
+            <h1 style="color: #2c3e50;">🛠️ IT-Administration Dashboard</h1>
+            <p style="color: #7f8c8d;">Zentrale Übersicht für Tickets und CMDB-Inventar</p>
+        </header>
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -133,15 +95,16 @@
                             <th>SLA-Deadline</th>
                             <th>Status</th>
                             <th>Bearbeitung</th>
-                        </thead>
+                        </tr>
+                    </thead>
                     <tbody>
                         {% for req in requests %}
-                          <tr>
-                              <td><span style="color: #999;">#{{ req.id }}</span></td>
-                              <td><strong>{{ req.user_name }}</strong></td>
-                              <td>{{ req.user_dept }}</td>
-                              <td><span class="badge bg-light text-dark">{{ req.service_id }}</span></td>
-                              <td>
+                         <tr>
+                            <td><span style="color: #999;">#{{ req.id }}</span></td>
+                            <td><strong>{{ req.user_name }}</strong></td>
+                            <td>{{ req.user_dept }}</td>
+                            <td><span class="badge bg-light text-dark">{{ req.service_id }}</span></td>
+                            <td>
                                 {% if req.priority == 'P1' %}
                                     <span class="badge bg-danger">P1</span>
                                 {% elif req.priority == 'P2' %}
@@ -151,8 +114,8 @@
                                 {% else %}
                                     <span class="badge bg-secondary">{{ req.priority }}</span>
                                 {% endif %}
-                              </td>
-                              <td>
+                            </td>
+                            <td>
                                 {% if req.sla_deadline %}
                                     {{ req.sla_deadline.strftime('%d.%m.%Y %H:%M') }}
                                     {% if req.status != 'Completed' and req.status != 'Rejected' and req.sla_deadline < now %}
@@ -161,8 +124,8 @@
                                 {% else %}
                                     -
                                 {% endif %}
-                              </td>
-                              <td>
+                            </td>
+                            <td>
                                 <span class="status-badge 
                                     {% if req.status == 'Pending' %}status-pending
                                     {% elif req.status == 'Checking Inventory' %}status-checking
@@ -172,8 +135,8 @@
                                     {% else %}status-rejected{% endif %}">
                                     {{ req.status }}
                                 </span>
-                              </td>
-                              <td>
+                            </td>
+                            <td>
                                 <form action="{{ url_for('admin_update_request', request_id=req.id) }}" method="post">
                                     <select name="status" onchange="this.form.submit()">
                                         <option value="Pending" {% if req.status == 'Pending' %}selected{% endif %}>Warten</option>
@@ -184,27 +147,25 @@
                                         <option value="Rejected" {% if req.status == 'Rejected' %}selected{% endif %}>Ablehnen</option>
                                     </select>
                                 </form>
-                              </td>
-                          </tr>
+                            </td>
+                        </tr>
                         {% else %}
-                          <tr>
+                        <tr>
                             <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
                                 📁 Momentan liegen keine neuen Anfragen vor.
                             </td>
-                          </tr>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Einheitliche Action-Bar mit Bootstrap-Buttons -->
         <div style="text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 12px;">
-            <a href="{{ url_for('index') }}" class="btn btn-secondary" style="margin: 0 10px;"><i class="fas fa-arrow-left"></i> Zum Katalog</a>
-            <a href="{{ url_for('add_service_form') }}" class="btn btn-primary" style="margin: 0 10px;"><i class="fas fa-plus"></i> Service hinzufügen</a>
-            <a href="{{ url_for('admin_cmdb') }}" class="btn btn-info" style="margin: 0 10px;"><i class="fas fa-database"></i> CMDB Inventar</a>
-            <a href="{{ url_for('kedb_list') }}" class="btn btn-dark" style="margin: 0 10px;"><i class="fas fa-book"></i> KEDB</a>
-            <a href="{{ url_for('manage_services') }}" class="btn btn-warning" style="margin: 0 10px;"><i class="fas fa-boxes"></i> Service-Verwaltung</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary" style="margin: 0 10px;">← Zum Katalog</a>
+            <a href="{{ url_for('add_service_form') }}" class="btn-primary" style="margin: 0 10px;">➕ Service hinzufügen</a>
+            <a href="{{ url_for('admin_cmdb') }}" class="btn-dark" style="margin: 0 10px;">🖥️ CMDB Inventar</a>
+            <a href="{{ url_for('kedb_list') }}" class="btn-dark" style="margin: 0 10px;">📖 KEDB</a>
         </div>
     </div>
 </body>

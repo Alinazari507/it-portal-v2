@@ -101,6 +101,7 @@ def request_service():
 @login_required
 def requests_list():
     reqs = database.get_requests(user_name=current_user.fullname)
+    # Jetzt: now an Template übergeben für SLA-Vergleich
     return render_template('requests.html', requests=reqs, now=datetime.now())
 
 @app.route('/admin')
@@ -112,6 +113,7 @@ def admin_panel():
         stats = database.get_ticket_stats()
         inv_count = database.get_inventory_count()
         requests_all = database.get_all_requests()
+        # now an Template übergeben (optional, aber für Erweiterung sinnvoll)
         return render_template('admin.html', requests=requests_all, stats=stats, inv_count=inv_count, now=datetime.now())
     except Exception as e:
         return f"Error: {str(e)}", 500
@@ -151,6 +153,9 @@ def admin_cmdb():
             flash('Fehler: Asset-Tag bereits vorhanden.')
         return redirect(url_for('admin_cmdb'))
     items = database.get_inventory()
+    # Optional: Logs für IMAC/RD (falls gewünscht)
+    # logs = database.get_inventory_logs()  # falls vorhanden
+    # return render_template('cmdb.html', items=items, logs=logs)
     return render_template('cmdb.html', items=items)
 
 @app.route('/admin/add_service', methods=['GET', 'POST'])
@@ -209,39 +214,6 @@ def kedb_add():
     database.add_known_error(error_code, description, workaround, solution)
     flash('Known Error hinzugefügt.')
     return redirect(url_for('kedb_list'))
-
-# ==================== NEU: Service-Management (aktivieren/deaktivieren) ====================
-@app.route('/admin/services')
-@login_required
-def manage_services():
-    if current_user.role != 'admin':
-        return redirect(url_for('index'))
-    conn = sqlite3.connect(database.DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT id, name, category, active FROM services ORDER BY category, name")
-    rows = c.fetchall()
-    conn.close()
-    services = [{'id': r[0], 'name': r[1], 'category': r[2], 'active': r[3]} for r in rows]
-    return render_template('manage_services.html', services=services)
-
-@app.route('/admin/service/toggle/<service_id>', methods=['POST'])
-@login_required
-def toggle_service_status(service_id):
-    if current_user.role != 'admin':
-        return redirect(url_for('index'))
-    conn = sqlite3.connect(database.DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT active FROM services WHERE id=?", (service_id,))
-    row = c.fetchone()
-    if row:
-        new_status = 0 if row[0] == 1 else 1
-        c.execute("UPDATE services SET active = ? WHERE id=?", (new_status, service_id))
-        conn.commit()
-        flash(f'Service {service_id} wurde {"aktiviert" if new_status == 1 else "deaktiviert"}.')
-    else:
-        flash('Service nicht gefunden.')
-    conn.close()
-    return redirect(url_for('manage_services'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

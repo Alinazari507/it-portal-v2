@@ -5,169 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meine Anfragen | IT Service Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f4f7fc;
-            color: #1e2a3e;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e4663, #0f2c42);
-            border-radius: 28px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .header h1 {
-            font-size: 1.6rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .header p {
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .back-link {
-            background: rgba(255,255,255,0.2);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .back-link:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-
-        .card-header {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2edf2;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 1rem;
-            border-bottom: 1px solid #eef2f5;
-        }
-
-        th {
-            background: #fefefe;
-            color: #1e4663;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.8rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-checking { background: #e2f0fa; color: #0c5460; }
-        .status-progress { background: #cce5ff; color: #004085; }
-        .status-order { background: #ffe0b3; color: #b85c00; }
-        .status-approved { background: #d4edda; color: #155724; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-rejected { background: #f8d7da; color: #721c24; }
-
-        .priority {
-            font-weight: bold;
-        }
-        .priority-p1 { color: #dc3545; }
-        .priority-p2 { color: #fd7e14; }
-        .priority-p3 { color: #ffc107; }
-        .priority-p4 { color: #6c757d; }
-
-        .deadline-warning {
-            color: #dc3545;
-            font-weight: 600;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #6c7a89;
-        }
-
-        @media (max-width: 768px) {
-            th, td {
-                padding: 0.75rem;
-                font-size: 0.8rem;
-            }
-            .container {
-                padding: 0 1rem;
-            }
-        }
+        .deadline-warning { color: #dc3545; font-weight: 600; margin-left: 5px; }
+        .priority-p1 { color: #dc3545; font-weight: bold; }
+        .priority-p2 { color: #fd7e14; font-weight: bold; }
+        .priority-p3 { color: #ffc107; font-weight: bold; }
+        .priority-p4 { color: #6c757d; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <div class="page-header">
             <div>
                 <h1><i class="fas fa-clipboard-list"></i> Meine Service-Anfragen</h1>
                 <p>Übersicht über alle Ihre eingereichten Tickets – Status, Priorität und SLA-Deadline</p>
             </div>
-            <a href="{{ url_for('index') }}" class="back-link"><i class="fas fa-arrow-left"></i> Zum Katalog</a>
+            <a href="{{ url_for('index') }}" class="back-link">← Zum Katalog</a>
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <i class="fas fa-ticket-alt"></i> Anfragen
-            </div>
-            <div class="table-responsive">
-                <table>
+            <div class="card-header"><i class="fas fa-ticket-alt"></i> Anfragen</div>
+            <div class="card-body table-responsive">
+                <table class="table">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Service</th>
-                            <th>Anfragedatum</th>
-                            <th>Priorität</th>
-                            <th>SLA-Deadline</th>
-                            <th>Status</th>
-                            <th>Begründung</th>
-                        </tr>
+                        <tr><th>ID</th><th>Service</th><th>Anfragedatum</th><th>Priorität</th><th>SLA-Deadline</th><th>Status</th><th>Begründung</th></tr>
                     </thead>
                     <tbody>
                         {% for req in requests %}
@@ -175,50 +37,38 @@
                             <td><strong>#{{ req.id }}</strong></td>
                             <td>{{ req.service_id }}</td>
                             <td>{{ req.date[:16] if req.date else '-' }}</td>
-                            <td class="priority priority-{{ req.priority|lower }}">
-                                {{ req.priority if req.priority else 'P3' }}
-                            </td>
+                            <td class="priority-{{ req.priority|lower }}">{{ req.priority if req.priority else 'P3' }}</td>
                             <td>
                                 {% if req.sla_deadline %}
                                     {{ req.sla_deadline.strftime('%d.%m.%Y %H:%M') }}
                                     {% if req.status != 'Completed' and req.status != 'Rejected' and req.sla_deadline < now %}
                                         <span class="deadline-warning"><i class="fas fa-exclamation-triangle"></i> überschritten</span>
                                     {% endif %}
-                                {% else %}
-                                    -
-                                {% endif %}
+                                {% else %}-{% endif %}
                             </td>
                             <td>
-                                <span class="badge 
+                                <span class="status-badge 
                                     {% if req.status == 'Pending' %}status-pending
                                     {% elif req.status == 'Checking Inventory' %}status-checking
                                     {% elif req.status == 'In Progress' %}status-progress
                                     {% elif req.status == 'To be Ordered' %}status-order
-                                    {% elif req.status == 'Approved' or req.status == 'Completed' %}status-completed
+                                    {% elif req.status == 'Approved' or req.status == 'Completed' %}status-approved
                                     {% elif req.status == 'Rejected' %}status-rejected
                                     {% else %}status-pending{% endif %}">
                                     {{ req.status }}
                                 </span>
                             </td>
-                            <td style="max-width: 250px; word-break: break-word;">
-                                {{ req.reason[:80] }}{% if req.reason|length > 80 %}…{% endif %}
-                            </td>
+                            <td style="max-width:250px;">{{ req.reason[:80] }}{% if req.reason|length > 80 %}…{% endif %}</td>
                         </tr>
                         {% else %}
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <i class="fas fa-inbox"></i> Sie haben noch keine Anfragen gestellt.<br>
-                                <a href="{{ url_for('index') }}" style="color:#0078d4;">Jetzt erste Anfrage starten →</a>
-                            </td>
-                        </tr>
+                        <tr><td colspan="7" class="text-center">Sie haben noch keine Anfragen gestellt.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <div style="margin-top: 1.5rem; text-align: center;">
-            <a href="{{ url_for('index') }}" style="color:#0078d4;"><i class="fas fa-chevron-left"></i> Zurück zum Service-Katalog</a>
+        <div class="action-bar" style="margin-top:1rem;">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">← Zum Service-Katalog</a>
         </div>
     </div>
 </body>

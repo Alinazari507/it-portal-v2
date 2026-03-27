@@ -1,16 +1,232 @@
-/* IT Service Portal - Base Styles */
+/* ========== IT Service Portal – Global Styles ========== */
 :root {
     --primary: #0078d4;
+    --primary-dark: #005a9e;
     --secondary: #1e4663;
     --success: #28a745;
     --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
     --gray: #6c757d;
-    --light: #f8f9fa;
+    --light: #f8f9fc;
+    --dark: #2c3e50;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     background: #f4f7fc;
-    margin: 0;
-    padding: 0;
+    color: #1e2a3e;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* ========== Header (einheitlich wie CMDB) ========== */
+.page-header {
+    background: linear-gradient(135deg, #1e4663, #0f2c42);
+    border-radius: 28px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.page-header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.page-header p {
+    opacity: 0.9;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.back-link {
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.back-link:hover {
+    background: rgba(255,255,255,0.3);
+    text-decoration: none;
+    color: white;
+}
+
+/* ========== Cards ========== */
+.card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border: 1px solid #e2edf2;
+}
+
+.card-header {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2edf2;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* ========== Buttons ========== */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #218838; transform: translateY(-2px); }
+.btn-warning { background: var(--warning); color: #856404; }
+.btn-warning:hover { background: #e0a800; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #c82333; }
+.btn-secondary { background: var(--gray); color: white; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-info { background: var(--info); color: white; }
+.btn-info:hover { background: #138496; }
+
+.btn-excel {
+    background-color: #1d6f42;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn-excel:hover { background-color: #145532; }
+
+/* ========== Footer Action Bar ========== */
+.action-bar {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 60px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+}
+.action-bar .btn { margin: 0; }
+
+/* ========== Badges & Status ========== */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.badge-active { background: #d4edda; color: #155724; }
+.badge-inactive { background: #f8d7da; color: #721c24; }
+.badge-lager { background: #fff3cd; color: #856404; }
+.badge-defect { background: #f8d7da; color: #721c24; }
+.badge-retired { background: #e2e3e5; color: #383d41; }
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.status-pending { background: #fff3cd; color: #856404; }
+.status-checking { background: #e2f0fa; color: #0c5460; }
+.status-progress { background: #cce5ff; color: #004085; }
+.status-order { background: #ffe0b3; color: #b85c00; }
+.status-approved { background: #d4edda; color: #155724; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+
+/* ========== Tables ========== */
+.table-responsive { overflow-x: auto; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eef2f5;
+}
+th {
+    background: #fefefe;
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ========== Form Elements ========== */
+.form-group { margin-bottom: 1.2rem; }
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--dark);
+}
+input, select, textarea {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .page-header { flex-direction: column; text-align: center; gap: 1rem; }
+    .action-bar { flex-direction: column; align-items: stretch; }
+    .action-bar .btn { text-align: center; }
 }

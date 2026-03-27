@@ -28,42 +28,22 @@
             overflow: hidden;
         }
 
-        /* Header im Stil der CMDB */
         .header {
-            background: linear-gradient(135deg, #1e4663, #0f2c42);
-            padding: 1.8rem 2rem;
+            background: linear-gradient(135deg, #0078d4, #005a9e);
+            padding: 2rem 2rem 1.5rem;
             color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
         }
 
         .header h1 {
-            font-size: 1.6rem;
-            margin-bottom: 0.2rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
         }
 
         .header p {
-            opacity: 0.8;
+            opacity: 0.9;
             font-size: 0.9rem;
         }
 
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        /* Restliche Styles (unverändert) */
         .form-content {
             padding: 2rem;
         }
@@ -159,17 +139,18 @@
             display: block;
             margin-top: 0.3rem;
         }
+
+        hr {
+            margin: 1.2rem 0;
+            border-color: #e2edf2;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header neu nach CMDB-Vorbild -->
         <div class="header">
-            <div>
-                <h1><i class="fas fa-plus-circle"></i> Service hinzufügen</h1>
-                <p>Erweitern Sie den IT-Servicekatalog – Business- und Technik-Sicht</p>
-            </div>
-            <a href="{{ url_for('index') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Zurück zum Katalog</a>
+            <h1><i class="fas fa-plus-circle"></i> Service hinzufügen</h1>
+            <p>Erweitern Sie den IT-Servicekatalog – Business- und Technik-Sicht</p>
         </div>
 
         <div class="form-content">

@@ -1,0 +1,16 @@
+/* IT Service Portal - Base Styles */
+:root {
+    --primary: #0078d4;
+    --secondary: #1e4663;
+    --success: #28a745;
+    --danger: #dc3545;
+    --gray: #6c757d;
+    --light: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
