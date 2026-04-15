@@ -243,7 +243,7 @@ def toggle_service_status(service_id):
     conn.close()
     return redirect(url_for('manage_services'))
 
-# ==================== NEU: Lager prüfen (Inventory Check) ====================
+# ==================== NEU: Lager prüfen (verbesserte Suche) ====================
 @app.route('/admin/check_inventory/<service_id>')
 @login_required
 def check_inventory(service_id):
@@ -255,8 +255,10 @@ def check_inventory(service_id):
         flash('Service nicht gefunden.')
         return redirect(url_for('admin_panel'))
     
-    # Suche in der CMDB nach Assets, die zum Service passen
-    search_term = service['name']
+    # Nur das erste Wort vor der ersten Klammer oder Leerzeichen verwenden
+    full_name = service['name']
+    search_term = full_name.split('(')[0].split(',')[0].strip()
+    
     conn = sqlite3.connect(database.DB_PATH)
     c = conn.cursor()
     c.execute("SELECT asset_tag, geraetetyp, status FROM inventory WHERE geraetetyp LIKE ? OR hersteller_modell LIKE ?", 
@@ -268,7 +270,7 @@ def check_inventory(service_id):
         asset_list = ", ".join([f"{a[0]} ({a[1]} - {a[2]})" for a in assets])
         flash(f'Gefundene Assets im Lager: {asset_list}')
     else:
-        flash(f'Kein Asset vom Typ "{service["name"]}" im Lager gefunden. Bitte bestellen oder CMDB aktualisieren.')
+        flash(f'Kein Asset vom Typ "{search_term}" im Lager gefunden. Bitte bestellen oder CMDB aktualisieren.')
     
     return redirect(url_for('admin_panel'))
 
