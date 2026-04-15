@@ -210,7 +210,6 @@ def kedb_add():
     flash('Known Error hinzugefügt.')
     return redirect(url_for('kedb_list'))
 
-# ==================== Service-Management (aktivieren/deaktivieren) ====================
 @app.route('/admin/services')
 @login_required
 def manage_services():
@@ -243,7 +242,6 @@ def toggle_service_status(service_id):
     conn.close()
     return redirect(url_for('manage_services'))
 
-# ==================== NEU: Lager prüfen (verbesserte Suche) ====================
 @app.route('/admin/check_inventory/<service_id>')
 @login_required
 def check_inventory(service_id):
@@ -255,7 +253,7 @@ def check_inventory(service_id):
         flash('Service nicht gefunden.')
         return redirect(url_for('admin_panel'))
     
-    # Nur das erste Wort vor der ersten Klammer oder Leerzeichen verwenden
+    # Suchbegriff aus dem Servicenamen extrahieren (vor Klammer oder Komma)
     full_name = service['name']
     search_term = full_name.split('(')[0].split(',')[0].strip()
     
