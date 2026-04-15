@@ -133,13 +133,14 @@
                             <th>SLA-Deadline</th>
                             <th>Status</th>
                             <th>Bearbeitung</th>
+                            <th>Lager prüfen</th>
                         </thead>
                     <tbody>
                         {% for req in requests %}
                           <tr>
                               <td><span style="color: #999;">#{{ req.id }}</span></td>
                               <td><strong>{{ req.user_name }}</strong></td>
-                              <td>{{ req.user_dept }}</td>
+                              <td>{{ req.user_dept }}</span></td>
                               <td><span class="badge bg-light text-dark">{{ req.service_id }}</span></td>
                               <td>
                                 {% if req.priority == 'P1' %}
@@ -185,10 +186,13 @@
                                     </select>
                                 </form>
                               </td>
+                              <td>
+                                <a href="{{ url_for('check_inventory', service_id=req.service_id) }}" class="btn btn-sm btn-info">📦 Jetzt prüfen</a>
+                              </td>
                           </tr>
                         {% else %}
                           <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #999;">
                                 📁 Momentan liegen keine neuen Anfragen vor.
                             </td>
                           </tr>

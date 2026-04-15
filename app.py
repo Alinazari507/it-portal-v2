@@ -210,7 +210,7 @@ def kedb_add():
     flash('Known Error hinzugefügt.')
     return redirect(url_for('kedb_list'))
 
-# ==================== NEU: Service-Management (aktivieren/deaktivieren) ====================
+# ==================== Service-Management (aktivieren/deaktivieren) ====================
 @app.route('/admin/services')
 @login_required
 def manage_services():
@@ -242,6 +242,35 @@ def toggle_service_status(service_id):
         flash('Service nicht gefunden.')
     conn.close()
     return redirect(url_for('manage_services'))
+
+# ==================== NEU: Lager prüfen (Inventory Check) ====================
+@app.route('/admin/check_inventory/<service_id>')
+@login_required
+def check_inventory(service_id):
+    if current_user.role != 'admin':
+        return redirect(url_for('index'))
+    
+    service = database.get_service(service_id)
+    if not service:
+        flash('Service nicht gefunden.')
+        return redirect(url_for('admin_panel'))
+    
+    # Suche in der CMDB nach Assets, die zum Service passen
+    search_term = service['name']
+    conn = sqlite3.connect(database.DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT asset_tag, geraetetyp, status FROM inventory WHERE geraetetyp LIKE ? OR hersteller_modell LIKE ?", 
+              (f'%{search_term}%', f'%{search_term}%'))
+    assets = c.fetchall()
+    conn.close()
+    
+    if assets:
+        asset_list = ", ".join([f"{a[0]} ({a[1]} - {a[2]})" for a in assets])
+        flash(f'Gefundene Assets im Lager: {asset_list}')
+    else:
+        flash(f'Kein Asset vom Typ "{service["name"]}" im Lager gefunden. Bitte bestellen oder CMDB aktualisieren.')
+    
+    return redirect(url_for('admin_panel'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
